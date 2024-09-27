@@ -1,1 +1,2 @@
 python3 generate.py > refutations.txt
+python3 show_out.py > output.txt # already added mine
