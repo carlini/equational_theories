@@ -68,7 +68,7 @@ sys.stderr.write("Generating solutions forever; C-c to kill when you want it to 
 while True:
     N = random.randint(3, 12)
     S = set(range(N))
-    a, b, c, d, e, f = np.random.randint(0, N, 6)
+    #a, b, c, d, e, f = np.random.randint(0, N, 6)
 
     """
     k = random.randint(0, 4)
@@ -86,9 +86,12 @@ while True:
         op = lambda x, y: ((a * x**2 + b * y**2 + c * x + d * y + e * x * y) % N) | x
     #"""
 
-    src = f"({a} * x**2 + {b} * y**2 + {c} * x + {d} * y + {e} * x * y) % {N}"
-    op = lambda x, y: (a * x**2 + b * y**2 + c * x + d * y + e * x * y) % N
+    #src = f"({a} * x**2 + {b} * y**2 + {c} * x + {d} * y + {e} * x * y) % {N}"
+    #op = lambda x, y: (a * x**2 + b * y**2 + c * x + d * y + e * x * y) % N
 
+    src = f"(x & y) % {N}"
+    op = lambda x, y: (x & (N-y))
+    
     #src = f"({c} * x + {d} * y) % {N}"
     #op = lambda x, y: (c * x + d * y) % N
     

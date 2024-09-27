@@ -60,14 +60,14 @@ def proc(row):
                       "with op(x,y) =", op_str,
                       "when evaluated at", why)
 
-    if len(todox) > 0 and len(todoy) > 0:
+    if len(todox) > 0 and len(todoy) > 0 and False:
         print("Equations", [fns[x][0].split()[1] for x in set(todox)],
               "do not imply", [fns[x][0].split()[1] for x in set(todoy)],
               "with op(x,y) =", eq)
         
 
 # You must run `python generate.py > refutations.txt` first
-for fp in ["refutations.txt"]:
+for fp in ["refutations_62percent.txt"]:
     for row in open(fp):
         proc(row)
         

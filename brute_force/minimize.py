@@ -29,7 +29,8 @@ def proc(row):
                 did_print = True
 
 
-for fp in ["../../out"]:
+for fp in ["../../out", "/tmp/9"]:
     for row in open(fp):
         proc(row)
         
+print(np.mean(grid))

@@ -16,6 +16,65 @@ class ExprNode:
             return f"({self.left} {self.value} {self.right})"
         return self.value
 
+    def get_leafs(root):
+        def traverse(node, leaves):
+            if not node:
+                return
+            
+            if not node.left and not node.right:  # Leaf node
+                leaves.add(node.value)
+            else:
+                traverse(node.left, leaves)
+                traverse(node.right, leaves)
+    
+        leaf_set = set()
+        traverse(root, leaf_set)
+        return leaf_set
+
+    def rename(root, rename_map):
+        def traverse(node):
+            if not node:
+                return None
+            
+            if not node.left and not node.right:  # Leaf node
+                new_value = rename_map.get(node.value, node.value)
+                return ExprNode(new_value)
+            
+            new_left = traverse(node.left)
+            new_right = traverse(node.right)
+            return ExprNode(node.value, new_left, new_right)
+    
+        return traverse(root)
+
+def is_same_under_rewriting(left, right):
+    def traverse(node, mapping):
+        if not node.left and not node.right:  # Leaf node
+            if node.value not in mapping:
+                if node.value in mapping.values():
+                    return False  # This value is already mapped to another variable
+                mapping[node.value] = len(mapping)
+            return mapping[node.value]
+        
+        if not node.left or not node.right:
+            return None  # Invalid expression tree
+        
+        left_result = traverse(node.left, mapping)
+        right_result = traverse(node.right, mapping)
+        
+        if left_result is None or right_result is None:
+            return None
+        
+        return (node.value, left_result, right_result)
+
+    mapping1 = {}
+    left_structure = traverse(left, mapping1)
+    mapping2 = {}
+    right_structure = traverse(right, mapping2)
+
+    if left_structure == right_structure:
+        return {v:k for k,v in mapping1.items()}, {v:k for k,v in mapping2.items()}
+    return None
+    
 # Parser implementation
 class Parser:
     def __init__(self, expression):
@@ -29,7 +88,7 @@ class Parser:
     def parse_expression(self):
         nodes = [self.parse_term()]
 
-        while self.current_char() == '∘':
+        while self.current_char() == '∘' or self.current_char() == '.':
             op = self.current_char()
             self.advance()
             right = self.parse_term()
@@ -79,6 +138,17 @@ def expr_to_prefix(node):
         return f"f({left}, {right})"
     else:
         return node.value
+
+def make_tree(equation):
+    lhs_expr, rhs_expr = equation.split('=')
+    parser_lhs = Parser(lhs_expr)
+    tree_lhs = parser_lhs.parse()
+
+    # Parse RHS
+    parser_rhs = Parser(rhs_expr)
+    tree_rhs = parser_rhs.parse()
+
+    return ExprNode("=", left=tree_lhs, right=tree_rhs)
 
 # Function to convert equations to lambdas
 ctr = 0
